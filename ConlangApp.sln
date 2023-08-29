@@ -5,7 +5,7 @@ VisualStudioVersion = 17.7.34018.315
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Conlang.UI", "Conlang.UI\Conlang.UI.csproj", "{4C824A72-3D89-433B-B308-218EFD67152E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Conlang.Core", "ConlangApp.Core\Conlang.Core.csproj", "{47ECFA52-9332-4B31-9738-4698F97036C8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Conlang.Core", "Conlang.Core\Conlang.Core.csproj", "{47ECFA52-9332-4B31-9738-4698F97036C8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Conlang.Infrastructure", "Conlang.Infrastructure\Conlang.Infrastructure.csproj", "{769C92C2-CB80-4030-B7B4-7CF9ED955B89}"
 EndProject

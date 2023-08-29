@@ -2,7 +2,7 @@
 
 namespace Conlang.Core.Words
 {
-    public abstract class Word
+    public class Word
     {
         public int Id { get; private set; }
         public required string IPARepresentation { get; set; }

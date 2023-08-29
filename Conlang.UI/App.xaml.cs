@@ -5,6 +5,7 @@ using Conlang.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System.IO;
+using System.Linq;
 
 namespace Conlang.UI
 {
@@ -21,10 +22,12 @@ namespace Conlang.UI
             ConfigureServices(serviceCollection);
             ServiceProvider = serviceCollection.BuildServiceProvider();
 
+            TestDatabaseConnection();
+
             base.OnStartup(e);
         }
 
-        private void ConfigureServices(IServiceCollection services)
+        void ConfigureServices(IServiceCollection services)
         {
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
@@ -38,6 +41,24 @@ namespace Conlang.UI
 
             // Register other necessary services
             // services.AddTransient<YourRepository>();
+        }
+
+        void TestDatabaseConnection()
+        {
+            using var scope = ServiceProvider.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<ConlangDbContext>();
+
+            // Try fetching data or any other operation
+            var anyWordsExist = dbContext.Words.Any();
+
+            if (anyWordsExist)
+            {
+                MessageBox.Show("Successfully connected to the database and found words.");
+            }
+            else
+            {
+                MessageBox.Show("Successfully connected to the database but no words found.");
+            }
         }
     }
 }
