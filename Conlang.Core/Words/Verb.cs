@@ -1,4 +1,4 @@
-﻿using Conlang.Core.Entities;
+﻿using Conlang.Core.Entities.Conjugation;
 using Conlang.Core.Enums;
 
 namespace Conlang.Core.Words

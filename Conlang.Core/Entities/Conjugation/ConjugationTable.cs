@@ -1,4 +1,4 @@
-﻿namespace Conlang.Core.Entities
+﻿namespace Conlang.Core.Entities.Conjugation
 {
     class ConjugationTable
     {

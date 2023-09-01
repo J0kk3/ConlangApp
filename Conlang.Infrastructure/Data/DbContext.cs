@@ -7,7 +7,7 @@ namespace Conlang.Infrastructure.Data
     {
         public ConlangDbContext(DbContextOptions<ConlangDbContext> options) : base(options) { }
 
-        public DbSet<Word> Words { get; set; }
+        public DbSet<Word> Words { get; private set; }
         // Add other DbSets for your entities...
     }
 }

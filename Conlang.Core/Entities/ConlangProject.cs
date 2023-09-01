@@ -2,15 +2,25 @@
 {
     public class ConlangProject
     {
-        public Guid Id { get; private set; } //CTOR
+        public Guid Id { get; private set; }
         public required string ConlangName { get; set; }
         public string? ConlangParent { get; set; }
-        public required string ConlangAuthor { get;  set; } //CTOR private set?
-        public DateTime DateCreated { get; private set; } //CTOR
-        public required LanguageStructure Structure { get; set; }
+        public string ConlangAuthor { get; private set; }
+        public DateTime DateCreated { get; private set; }
+        public LanguageStructure Structure { get; set; }
         public List<Words.Word>? Vocabulary { get; set; }
         /*If i plan on expanding this, consider breaking it up into its own class
          * like last modified, associated tags, etc.
          */
+
+        public ConlangProject(string conlangAuthor, LanguageStructure structure, string conlangName = "New Conlang")
+        {
+            Id = Guid.NewGuid();
+            DateCreated = DateTime.Now;
+
+            ConlangName = conlangName;
+            ConlangAuthor = conlangAuthor;
+            Structure = structure;
+        }
     }
 }

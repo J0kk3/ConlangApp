@@ -1,6 +1,6 @@
 ﻿using Conlang.Core.Enums;
 
-namespace Conlang.Core.Entities
+namespace Conlang.Core.Entities.Conjugation
 {
     public class ConjugationRule
     {

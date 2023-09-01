@@ -1,4 +1,5 @@
-﻿using Conlang.Core.Enums;
+﻿using Conlang.Core.Entities.Syllables;
+using Conlang.Core.Enums;
 
 namespace Conlang.Core.Entities
 {

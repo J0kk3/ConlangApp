@@ -1,4 +1,5 @@
-﻿using Conlang.Core.Enums;
+﻿using Conlang.Core.Entities.Syllables;
+using Conlang.Core.Enums;
 
 namespace Conlang.Core.Words
 {
@@ -8,6 +9,7 @@ namespace Conlang.Core.Words
         public required string IPARepresentation { get; set; }
         public required string Latinization { get; set; }
         public string? EnglishTranslation { get; set; }
+        public List<Syllable> Syllables { get; set; } = new List<Syllable>();
 
         // Description and notes fields allow users to add any context or specifics they want for a word.
         public string? Description { get; set; }
@@ -22,7 +24,7 @@ namespace Conlang.Core.Words
         public WordRegister Register { get; set; }
 
         /// <summary>
-        /// Returns the Latinized representation of the word if available, 
+        /// Returns the Latinized representation of the word if available,
         /// otherwise returns the IPA representation.
         /// </summary>
         /// <returns>The best representation of the word for display purposes.</returns>
