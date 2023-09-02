@@ -8,12 +8,12 @@ namespace Conlang.Core.Words
         public int Id { get; private set; }
         public required string IPARepresentation { get; set; }
         public required string Latinization { get; set; }
-        public string? EnglishTranslation { get; set; }
+        public string EnglishTranslation { get; set; }
         public List<Syllable> Syllables { get; set; } = new List<Syllable>();
 
         // Description and notes fields allow users to add any context or specifics they want for a word.
-        public string? Description { get; set; }
-        public string? Notes { get; set; }
+        public string Description { get; set; }
+        public string Notes { get; set; }
 
         /// <summary>
         /// Enum with Noun, Verb, Adjective, etc.

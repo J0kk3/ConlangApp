@@ -22,7 +22,7 @@ namespace Conlang.UI
             ConfigureServices(serviceCollection);
             ServiceProvider = serviceCollection.BuildServiceProvider();
 
-            TestDatabaseConnection();
+            // TestDatabaseConnection();
 
             base.OnStartup(e);
         }
@@ -37,28 +37,28 @@ namespace Conlang.UI
             var connectionString = configuration.GetConnectionString("DefaultConnection");
 
             services.AddDbContext<ConlangDbContext>(options =>
-                options.UseNpgsql(connectionString));
+                options.UseNpgsql(connectionString).EnableSensitiveDataLogging());
 
             // Register other necessary services
             // services.AddTransient<YourRepository>();
         }
 
-        void TestDatabaseConnection()
-        {
-            using var scope = ServiceProvider.CreateScope();
-            var dbContext = scope.ServiceProvider.GetRequiredService<ConlangDbContext>();
+        // void TestDatabaseConnection()
+        // {
+        //     using var scope = ServiceProvider.CreateScope();
+        //     var dbContext = scope.ServiceProvider.GetRequiredService<ConlangDbContext>();
 
-            // Try fetching data or any other operation
-            var anyWordsExist = dbContext.Words.Any();
+        //     // Try fetching data or any other operation
+        //     var anyWordsExist = dbContext.Words.Any();
 
-            if (anyWordsExist)
-            {
-                MessageBox.Show("Successfully connected to the database and found words.");
-            }
-            else
-            {
-                MessageBox.Show("Successfully connected to the database but no words found.");
-            }
-        }
+        //     if (anyWordsExist)
+        //     {
+        //         MessageBox.Show("Successfully connected to the database and found words.");
+        //     }
+        //     else
+        //     {
+        //         MessageBox.Show("Successfully connected to the database but no words found.");
+        //     }
+        // }
     }
 }
