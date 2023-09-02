@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Conlang.Core.Words;
 using Conlang.Core.Entities.IPA;
+using Conlang.Core.Entities.Users;
+using Conlang.Core.Entities;
 
 namespace Conlang.Infrastructure.Data
 {
@@ -8,12 +10,22 @@ namespace Conlang.Infrastructure.Data
     {
         public ConlangDbContext(DbContextOptions<ConlangDbContext> options) : base(options) { }
 
+        public DbSet<Author> Authors { get; set; }
         public DbSet<Word> Words { get; private set; }
         public DbSet<IPASymbol> IPASymbols { get; set; }
         public DbSet<VowelSymbol> VowelSymbols { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<ConlangProject>().OwnsOne(p => p.Structure, structure =>
+            {
+                structure.OwnsOne(s => s.SyllableStructure);
+            });
+
+            modelBuilder.Entity<ConlangProject>()
+                .HasOne(p => p.Author)
+                .WithMany(a => a.ConlangProjects)
+                .HasForeignKey(p => p.AuthorId);
             #region Consonants
             modelBuilder.Entity<IPASymbol>().HasData(
                 new IPASymbol(1, "m̥", "Voiceless bilabial nasal", "Bilabial", "Nasal", true),

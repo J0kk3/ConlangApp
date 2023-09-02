@@ -5,8 +5,43 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Conlang.UI"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="MainWindow" Height="1080" Width="1920">
 
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Centered StackPanel for Author Selection or Creation -->
+        <StackPanel Grid.Row="1" Grid.Column="1">
+
+            <!-- List for Existing Authors (this would need data binding) -->
+            <ListView x:Name="AuthorsListView" ItemsSource="{Binding Authors}" Visibility="Visible" Width="400">
+            </ListView>
+
+            <!-- Author creation form with custom placeholder effect -->
+            <StackPanel x:Name="AuthorCreationForm" Visibility="visible">
+                <Grid>
+                    <TextBox x:Name="UserNameTextBox" GotFocus="TextBox_GotFocus" LostFocus="TextBox_LostFocus" Background="Transparent" Margin="0,10"/>
+                    <TextBlock Text="Enter Author Name" IsHitTestVisible="False" Foreground="Gray" Margin="5,10,0,0"/>
+                </Grid>
+
+                <Grid>
+                    <PasswordBox x:Name="UserPasswordBox" GotFocus="PasswordBox_GotFocus" LostFocus="PasswordBox_LostFocus" Background="Transparent" Margin="0,10"/>
+                    <TextBlock Text="Enter Password" IsHitTestVisible="False" Foreground="Gray" Margin="5,10,0,0"/>
+                </Grid>
+
+                <Button Content="Create Author" Width="150" Height="40" HorizontalAlignment="Center" Click="OnCreateAuthorClicked"/>
+            </StackPanel>
+
+        </StackPanel>
     </Grid>
 </Window>
