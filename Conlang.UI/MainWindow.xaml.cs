@@ -1,15 +1,34 @@
 ﻿using Conlang.Core.Entities.Users;
 using Conlang.Infrastructure.Data;
 using Conlang.UI.ViewModels;
-using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Input;
 using System.Windows.Media;
 
 namespace Conlang.UI
 {
+    public class BoolToVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is bool && (bool)value)
+                return Visibility.Visible;
+            else
+                return Visibility.Collapsed;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -23,7 +42,11 @@ namespace Conlang.UI
             InitializeComponent();
             _dbContext = dbContext;
 
-            ViewModel = new MainViewModel();
+            ViewModel = new MainViewModel
+            {
+                Authors = new ObservableCollection<Author>(_dbContext.Authors.ToList())
+            };
+
             this.DataContext = ViewModel;
         }
 
@@ -57,8 +80,11 @@ namespace Conlang.UI
                 return;
             }
 
-            // Create salted hash
-            var hashedPassword = Author.CreateSaltedHash(password, out var salt);
+            // Generate a new salt
+            var salt = Author.GenerateSalt();
+
+            // Create salted hash using the generated salt
+            var hashedPassword = Author.CreateSaltedHash(password, salt);
 
             // Create new author instance
             var newAuthor = new Author
@@ -79,6 +105,108 @@ namespace Conlang.UI
             WorkspaceWindow workspace = new WorkspaceWindow();
             workspace.Show();
             this.Close();
+        }
+
+        void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (e.RemovedItems.Count > 0 && e.RemovedItems[0] is Author previousAuthor)
+            {
+                previousAuthor.IsSelected = false;
+            }
+
+            if (e.AddedItems.Count > 0 && e.AddedItems[0] is Author newAuthor)
+            {
+                newAuthor.IsSelected = true;
+            }
+        }
+
+        protected override void OnPreviewKeyDown(KeyEventArgs e)
+        {
+            base.OnPreviewKeyDown(e);
+
+            if (e.Key == Key.Escape && ViewModel.SelectedAuthor != null)
+            {
+                ViewModel.SelectedAuthor.IsSelected = false;
+                ViewModel.SelectedAuthor = null;
+
+                // Explicitly clear the ListView's selection
+                var authorsListView = this.FindName("AuthorsListView") as ListView;
+                if (authorsListView != null)
+                {
+                    authorsListView.SelectedIndex = -1;
+                }
+
+                e.Handled = true; // Important! Suppress further handling.
+            }
+        }
+
+        void OnAuthorLoginClicked(object sender, RoutedEventArgs e)
+        {
+            if (ViewModel.SelectedAuthor == null)
+            {
+                MessageBox.Show("Please select an author.");
+                return;
+            }
+
+            var hashedInputPassword = Author.CreateSaltedHash(ViewModel.InputPassword, ViewModel.SelectedAuthor.Salt);
+
+            if (hashedInputPassword == ViewModel.SelectedAuthor.Password)
+            {
+                // Login successful.
+                MessageBox.Show("Logged in successfully!");
+
+                // Navigate to the main application window or workspace
+                WorkspaceWindow workspace = new WorkspaceWindow();
+                workspace.Show();
+                this.Close();
+            }
+            else
+            {
+                MessageBox.Show("Incorrect password. Please try again.");
+            }
+        }
+
+        void OnPasswordChanged(object sender, RoutedEventArgs e)
+        {
+            var passwordBox = (PasswordBox)sender;
+            var vm = (MainViewModel)this.DataContext;
+            vm.InputPassword = passwordBox.Password;
+        }
+
+        void DeleteAuthorClick(object sender, RoutedEventArgs e)
+        {
+            if (ViewModel.SelectedAuthor == null) return;
+
+            var hashedInputPassword = Author.CreateSaltedHash(ViewModel.InputPassword, ViewModel.SelectedAuthor.Salt);
+
+            if (hashedInputPassword == ViewModel.SelectedAuthor.Password)
+            {
+                // Delete author logic
+                _dbContext.Authors.Remove(ViewModel.SelectedAuthor);
+                _dbContext.SaveChanges();
+                ViewModel.Authors.Remove(ViewModel.SelectedAuthor);
+            }
+            else
+            {
+                MessageBox.Show("Incorrect password. Cannot delete author.");
+            }
+        }
+        
+        void MainWindow_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            // Check if the clicked item is part of the ListView
+            var item = ItemsControl.ContainerFromElement(AuthorsListView, e.OriginalSource as DependencyObject) as ListViewItem;
+            if (item == null)
+            {
+                // Deselect the current item
+                AuthorsListView.SelectedIndex = -1;
+
+                if (ViewModel.SelectedAuthor != null)
+                {
+                    ViewModel.SelectedAuthor.IsSelected = false;
+                    ViewModel.SelectedAuthor = null;
+                }
+            }
         }
 
         void TextBox_GotFocus(object sender, RoutedEventArgs e)

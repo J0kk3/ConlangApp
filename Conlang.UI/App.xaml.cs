@@ -20,9 +20,11 @@ namespace Conlang.UI
         {
             var serviceCollection = new ServiceCollection();
             ConfigureServices(serviceCollection);
+
             ServiceProvider = serviceCollection.BuildServiceProvider();
 
-            // TestDatabaseConnection();
+            var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
+            mainWindow.Show();
 
             base.OnStartup(e);
         }
@@ -39,26 +41,7 @@ namespace Conlang.UI
             services.AddDbContext<ConlangDbContext>(options =>
                 options.UseNpgsql(connectionString).EnableSensitiveDataLogging());
 
-            // Register other necessary services
-            // services.AddTransient<YourRepository>();
+            services.AddTransient<MainWindow>();
         }
-
-        // void TestDatabaseConnection()
-        // {
-        //     using var scope = ServiceProvider.CreateScope();
-        //     var dbContext = scope.ServiceProvider.GetRequiredService<ConlangDbContext>();
-
-        //     // Try fetching data or any other operation
-        //     var anyWordsExist = dbContext.Words.Any();
-
-        //     if (anyWordsExist)
-        //     {
-        //         MessageBox.Show("Successfully connected to the database and found words.");
-        //     }
-        //     else
-        //     {
-        //         MessageBox.Show("Successfully connected to the database but no words found.");
-        //     }
-        // }
     }
 }
