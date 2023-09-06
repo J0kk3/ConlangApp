@@ -1,71 +1,20 @@
 ﻿<Window x:Class="Conlang.UI.MainWindow"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:ui="clr-namespace:Conlang.UI"
-    xmlns:local="clr-namespace:Conlang.Core.Entities.Users;assembly=Conlang.Core"
-    mc:Ignorable="d"
-    MouseUp="MainWindow_MouseUp"
-    Title="MainWindow" Height="1080" Width="1920">
-
-    <Window.Resources>
-        <ui:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
-    </Window.Resources>
-
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:usercontrols="clr-namespace:Conlang.UI.UserControls"
+        xmlns:local="clr-namespace:Conlang.UI"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="1080" Width="1920">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
-
-        <!-- Centered StackPanel for Author Selection or Creation -->
-        <StackPanel Grid.Row="1" Grid.Column="1">
-
-            <!-- List for Existing Authors (this would need data binding) -->
-            <ListView x:Name="AuthorsListView"
-                ItemsSource="{Binding Authors}"
-                SelectedItem="{Binding SelectedAuthor}"
-                SelectionChanged="ListView_SelectionChanged">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{Binding Name}" Margin="5"/>
-                            <PasswordBox Width="100" Margin="5" PasswordChanged="OnPasswordChanged" Visibility="{Binding IsSelected, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                            <Button Content="Enter" Click="OnAuthorLoginClicked" Margin="5" Visibility="{Binding IsSelected, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                            <Button Content="Delete" Click="DeleteAuthorClick" Margin="5" Visibility="{Binding IsSelected, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                        </StackPanel>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-
-            <!-- Author creation form with custom placeholder effect -->
-            <StackPanel x:Name="AuthorCreationForm" Visibility="visible">
-                <Grid>
-                    <TextBox x:Name="UserNameTextBox" GotFocus="TextBox_GotFocus"
-                        LostFocus="TextBox_LostFocus" Background="Transparent" Margin="0,10" />
-                    <TextBlock Text="Enter Author Name" IsHitTestVisible="False" Foreground="Gray"
-                        Margin="5,10,0,0" />
-                </Grid>
-
-                <Grid>
-                    <PasswordBox x:Name="UserPasswordBox" GotFocus="PasswordBox_GotFocus"
-                        LostFocus="PasswordBox_LostFocus" Background="Transparent" Margin="0,10" />
-                    <TextBlock Text="Enter Password" IsHitTestVisible="False" Foreground="Gray"
-                        Margin="5,10,0,0" />
-                </Grid>
-
-                <Button Content="Create Author" Width="150" Height="40" HorizontalAlignment="Center"
-                    Click="OnCreateAuthorClicked" />
-            </StackPanel>
-
-        </StackPanel>
+        <usercontrols:NavigationControl x:Name="navigationControlInstance" Grid.Row="0"/>
+        <Frame x:Name="MainFrame" Grid.Row="1" NavigationUIVisibility="Hidden"/>
     </Grid>
+
 </Window>

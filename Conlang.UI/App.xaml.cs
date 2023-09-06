@@ -5,7 +5,8 @@ using Conlang.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System.IO;
-using System.Linq;
+using Conlang.UI.ViewModels;
+using Conlang.UI.Services;
 
 namespace Conlang.UI
 {
@@ -41,7 +42,13 @@ namespace Conlang.UI
             services.AddDbContext<ConlangDbContext>(options =>
                 options.UseNpgsql(connectionString).EnableSensitiveDataLogging());
 
+            services.AddTransient<INavigationService, NavigationService>();
+            services.AddTransient<NavigationViewModel>();
             services.AddTransient<MainWindow>();
+            services.AddTransient<DashboardPage>();
+            services.AddTransient<DictionaryPage>();
+            services.AddTransient<SoundChangesPage>();
+            services.AddTransient<FamilyTreePage>();
         }
     }
 }
