@@ -4,19 +4,33 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="clr-namespace:Conlang.UI"
+    xmlns:converters="clr-namespace:Conlang.UI.Services"
     xmlns:local="clr-namespace:Conlang.Core.Entities.Users;assembly=Conlang.Core"
     mc:Ignorable="d"
     MouseUp="LoginPage_MouseUp"
     Title="LoginPage">
 
     <Page.Resources>
-        <ui:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
     </Page.Resources>
 
     <Grid>
+        <!-- Column Definitions -->
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="42.5*"/>
+            <ColumnDefinition Width="15*"/>
+            <ColumnDefinition Width="42.5*"/>
+        </Grid.ColumnDefinitions>
 
+        <!-- Row Definitions for vertical centering -->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
         <!-- Centered StackPanel for Author Selection or Creation -->
-        <StackPanel Grid.Row="1" Grid.Column="1">
+        <StackPanel Grid.Row="1" Grid.Column="1" VerticalAlignment="Center">
 
             <!-- List for Existing Authors (this would need data binding) -->
             <ListView x:Name="AuthorsListView"

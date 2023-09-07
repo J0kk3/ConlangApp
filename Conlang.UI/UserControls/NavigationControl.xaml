@@ -8,11 +8,11 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <StackPanel Orientation="Horizontal">
-            <Button Content="Dashboard" Name="DashboardButton" Command="{Binding NavigateToDashboardCommand}" Margin="0,0,10,0"/>
-            <Button Content="Dictionary" Name="DictionaryButton" Command="{Binding NavigateToDictionaryCommand}" Margin="0,0,10,0"/>
-             <Button Content="FamilyTree" Name="FamilyTreeButton" Command="{Binding NavigateToFamilyTreeCommand}" Margin="0,0,10,0"/>
-            <Button Content="SoundChanges" Name="SoundChangesButton" Command="{Binding NavigateToSoundChangesCommand}"  Margin="0,0,10,0"/>
-            <Button Content="Logout" Name="LogoutButton" Command="{Binding NavigateToLogoutCommand}" Margin="0,0,10,0"/>
+            <Button Content="Dashboard" Name="DashboardButton" Click="DashboardButton_Click" Margin="0,0,10,0"/>
+            <Button Content="Dictionary" Name="DictionaryButton" Click="DictionaryButton_Click" Margin="0,0,10,0"/>
+            <Button Content="FamilyTree" Name="FamilyTreeButton" Click="FamilyTreeButton_Click" Margin="0,0,10,0"/>
+            <Button Content="SoundChanges" Name="SoundChangesButton"  Click="SoundChangesButton_Click"  Margin="0,0,10,0"/>
+            <Button Content="Logout" Name="LogoutButton" Click="LogoutButton_Click" Margin="0,0,10,0"/>
         </StackPanel>
     </Grid>
 </UserControl>

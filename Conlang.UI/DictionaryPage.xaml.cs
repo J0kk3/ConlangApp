@@ -8,11 +8,9 @@ namespace Conlang.UI
     /// </summary>
     public partial class DictionaryPage : Page
     {
-        readonly IServiceProvider _serviceProvider;
-        public DictionaryPage(IServiceProvider serviceProvider)
+        public DictionaryPage()
         {
             InitializeComponent();
-            _serviceProvider = serviceProvider;
         }
     }
 }

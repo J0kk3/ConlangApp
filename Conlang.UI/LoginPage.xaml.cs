@@ -4,53 +4,40 @@ using Conlang.UI.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.ObjectModel;
-using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 
 namespace Conlang.UI
 {
-    public class BoolToVisibilityConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value is bool && (bool)value)
-                return Visibility.Visible;
-            else
-                return Visibility.Collapsed;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
+
+     //TODO: Refactor this class and move stuff out of the UI layer!
     public partial class LoginPage : Page
     {
-        readonly IServiceProvider _serviceProvider;
         readonly ConlangDbContext _dbContext;
         public MainViewModel ViewModel { get; set; }
 
-        public LoginPage(ConlangDbContext dbContext, IServiceProvider serviceProvider)
+        public LoginPage(ConlangDbContext dbContext)
         {
             InitializeComponent();
-            _serviceProvider = serviceProvider;
             _dbContext = dbContext;
 
-            ViewModel = new MainViewModel
-            {
-                Authors = new ObservableCollection<Author>(_dbContext.Authors.ToList())
-            };
-
+            ViewModel = ((App)Application.Current).ServiceProvider.GetService<MainViewModel>();
+            ViewModel.Authors = new ObservableCollection<Author>(_dbContext.Authors.ToList());
             this.DataContext = ViewModel;
+        }
+
+        public event EventHandler LoginSuccessful;
+
+        protected virtual void OnLoginSuccessful()
+        {
+            (DataContext as MainViewModel).IsLoggedIn = true;
+            LoginSuccessful?.Invoke(this, EventArgs.Empty);
         }
 
         T FindParentOfType<T>(DependencyObject child) where T : DependencyObject
@@ -104,11 +91,9 @@ namespace Conlang.UI
             _dbContext.Authors.Add(newAuthor);
             _dbContext.SaveChanges();
 
-            // Navigate to the new window
-            var dashboardView = _serviceProvider.GetRequiredService<DashboardPage>();
-            Frame mainFrame = Application.Current.MainWindow.FindName("MainFrame") as Frame;
-            if (mainFrame != null)
-                mainFrame.Navigate(dashboardView);
+            // Navigate to the new view
+            (DataContext as MainViewModel).IsLoggedIn = true;
+            OnLoginSuccessful();
         }
 
         void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -160,9 +145,18 @@ namespace Conlang.UI
                 MessageBox.Show("Logged in successfully!");
 
                 // Navigate to the main application window or workspace
-                var dashboardPage = _serviceProvider.GetRequiredService<DashboardPage>();
-                Frame mainFrame = Application.Current.MainWindow.FindName("MainFrame") as Frame;
-                mainFrame.Navigate(dashboardPage);
+                (DataContext as MainViewModel).IsLoggedIn = true;
+                var mainWindow = (MainWindow)Window.GetWindow(this);
+                if (mainWindow != null)
+                {
+                    Frame mainFrame = mainWindow.FindName("MainFrame") as Frame;
+                    if (mainFrame != null)
+                    {
+                        mainFrame.Navigate(new DashboardPage());
+                    }
+                }
+                (DataContext as MainViewModel).IsLoggedIn = true;
+                OnLoginSuccessful();
             }
             else
             {

@@ -8,11 +8,9 @@ namespace Conlang.UI
     /// </summary>
     public partial class SoundChangesPage : Page
     {
-        readonly IServiceProvider _serviceProvider;
-        public SoundChangesPage(IServiceProvider serviceProvider)
+        public SoundChangesPage()
         {
             InitializeComponent();
-            _serviceProvider = serviceProvider;
         }
     }
 }

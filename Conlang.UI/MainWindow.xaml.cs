@@ -1,6 +1,5 @@
 ﻿using Conlang.UI.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
-using System;
 using System.Windows;
 
 namespace Conlang.UI
@@ -10,15 +9,10 @@ namespace Conlang.UI
     /// </summary>
     public partial class MainWindow : Window
     {
-        readonly IServiceProvider _serviceProvider;
-
-        public MainWindow(IServiceProvider serviceProvider)
+        public MainWindow()
         {
-            _serviceProvider = serviceProvider;
             InitializeComponent();
-
-            var navigationService = _serviceProvider.GetRequiredService<Services.INavigationService>();
-            navigationControlInstance.DataContext = new NavigationViewModel(navigationService);
+            this.DataContext = ((App)Application.Current).ServiceProvider.GetService<MainViewModel>();
         }
     }
 }

@@ -4,16 +4,22 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:usercontrols="clr-namespace:Conlang.UI.UserControls"
+        xmlns:Converters="clr-namespace:Conlang.UI.Services"
         xmlns:local="clr-namespace:Conlang.UI"
         mc:Ignorable="d"
         Title="MainWindow" Height="1080" Width="1920">
+    
+    <Window.Resources>
+        <Converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+    </Window.Resources>
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <usercontrols:NavigationControl x:Name="navigationControlInstance" Grid.Row="0"/>
+        <usercontrols:NavigationControl x:Name="navigationControlInstance" Grid.Row="0" Visibility="{Binding IsLoggedIn, Converter={StaticResource BoolToVisibilityConverter}}"/>
         <Frame x:Name="MainFrame" Grid.Row="1" NavigationUIVisibility="Hidden"/>
     </Grid>
 

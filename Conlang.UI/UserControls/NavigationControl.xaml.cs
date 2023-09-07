@@ -1,6 +1,5 @@
 ﻿using Conlang.Infrastructure.Data;
 using Conlang.UI.ViewModels;
-using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -20,10 +19,9 @@ namespace Conlang.UI.UserControls
             InitializeComponent();
         }
 
-        internal NavigationControl(NavigationViewModel viewModel, ConlangDbContext context)
+        internal NavigationControl(ConlangDbContext context)
         {
             InitializeComponent();
-            DataContext = viewModel;
             _context = context;
         }
 
@@ -47,6 +45,54 @@ namespace Conlang.UI.UserControls
                 case "Logout":
                     LogoutButton.Background = Brushes.LightBlue;
                     break;
+            }
+        }
+
+        void DashboardButton_Click(object sender, RoutedEventArgs e)
+        {
+            var mainWindow = (MainWindow)Window.GetWindow(this);
+            SetActiveButton("Dashboard");
+            mainWindow.MainFrame.Navigate(new DictionaryPage());
+        }
+
+        void DictionaryButton_Click(object sender, RoutedEventArgs e)
+        {
+            var mainWindow = (MainWindow)Window.GetWindow(this);
+            SetActiveButton("Dictionary");
+            mainWindow.MainFrame.Navigate(new DictionaryPage());
+        }
+
+        void SoundChangesButton_Click(object sender, RoutedEventArgs e)
+        {
+            var mainWindow = (MainWindow)Window.GetWindow(this);
+            SetActiveButton("Sound Changes");
+            mainWindow.MainFrame.Navigate(new SoundChangesPage());
+        }
+
+        void FamilyTreeButton_Click(object sender, RoutedEventArgs e)
+        {
+            var mainWindow = (MainWindow)Window.GetWindow(this);
+            SetActiveButton("Family Tree");
+            mainWindow.MainFrame.Navigate(new FamilyTreePage());
+        }
+
+        void LogoutButton_Click(object sender, RoutedEventArgs e)
+        {
+            var mainWindow = (MainWindow)Window.GetWindow(this);
+            ResetButtonColors();
+            //var authService = _serviceProvider.GetRequiredService<IAuthenticationService>();
+            //authService.Logout();
+            var viewModel = mainWindow.DataContext as MainViewModel;
+
+            if (viewModel != null)
+            {
+                viewModel.IsLoggedIn = false;
+
+                Frame mainFrame = mainWindow.FindName("MainFrame") as Frame;
+                if (mainFrame != null)
+                {
+                    mainFrame.Navigate(new LoginPage(_context));
+                }
             }
         }
 

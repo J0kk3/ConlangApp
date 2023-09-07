@@ -8,11 +8,9 @@ namespace Conlang.UI
     /// </summary>
     public partial class FamilyTreePage : Page
     {
-        readonly IServiceProvider _serviceProvider;
-        public FamilyTreePage(IServiceProvider serviceProvider)
+        public FamilyTreePage()
         {
             InitializeComponent();
-            _serviceProvider = serviceProvider;
         }
     }
 }
