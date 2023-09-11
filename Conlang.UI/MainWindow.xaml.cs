@@ -1,6 +1,9 @@
-﻿using Conlang.UI.ViewModels;
+﻿using Conlang.UI.Services;
+using Conlang.UI.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
+using Conlang.UI.UserControls;
+using Conlang.Application.Services;
 
 namespace Conlang.UI
 {
@@ -12,7 +15,9 @@ namespace Conlang.UI
         public MainWindow()
         {
             InitializeComponent();
-            this.DataContext = ((App)Application.Current).ServiceProvider.GetService<MainViewModel>();
+
+            // Set the DataContext for the main window
+            this.DataContext = ((App)System.Windows.Application.Current).ServiceProvider.GetService<MainViewModel>();
         }
     }
 }

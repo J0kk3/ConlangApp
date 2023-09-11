@@ -1,14 +1,14 @@
 ﻿using Conlang.Core.Entities.Users;
-using Conlang.Infrastructure.Data;
 using Conlang.UI.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using Conlang.Application.Services;
+using Conlang.UI.Services;
 
 namespace Conlang.UI
 {
@@ -16,19 +16,20 @@ namespace Conlang.UI
     /// Interaction logic for MainWindow.xaml
     /// </summary>
 
-     //TODO: Refactor this class and move stuff out of the UI layer!
     public partial class LoginPage : Page
     {
-        readonly ConlangDbContext _dbContext;
         public MainViewModel ViewModel { get; set; }
+        readonly IAuthenticationService _authenticationService;
+        readonly INavigationService _navigationService;
 
-        public LoginPage(ConlangDbContext dbContext)
+        public LoginPage(IAuthenticationService authenticationService, INavigationService navigationService, MainViewModel viewModel)
         {
+            _authenticationService = authenticationService;
+            _navigationService = navigationService;
+            ViewModel = viewModel;
             InitializeComponent();
-            _dbContext = dbContext;
 
-            ViewModel = ((App)Application.Current).ServiceProvider.GetService<MainViewModel>();
-            ViewModel.Authors = new ObservableCollection<Author>(_dbContext.Authors.ToList());
+            ViewModel.LoadAuthors();
             this.DataContext = ViewModel;
         }
 
@@ -36,7 +37,8 @@ namespace Conlang.UI
 
         protected virtual void OnLoginSuccessful()
         {
-            (DataContext as MainViewModel).IsLoggedIn = true;
+            ViewModel.IsLoggedIn = true;
+            _navigationService.NavigateTo("Dashboard");
             LoginSuccessful?.Invoke(this, EventArgs.Empty);
         }
 
@@ -58,42 +60,58 @@ namespace Conlang.UI
 
         void OnCreateAuthorClicked(object sender, RoutedEventArgs e)
         {
-            // Get username and password from TextBox and PasswordBox
             var username = UserNameTextBox.Text;
             var password = UserPasswordBox.Password;
 
-            // Check for existing user
-            var existingAuthor = _dbContext.Authors.FirstOrDefault(a => a.Name == username);
-            if (existingAuthor != null)
+            var newAuthor = _authenticationService.Register(username, password);
+
+            if (newAuthor != null)
+            {
+                ViewModel.Authors.Add(newAuthor);
+                OnLoginSuccessful();
+            }
+            else
             {
                 MessageBox.Show("Author already exists!");
-                return;
             }
+        }
 
-            // Generate a new salt
-            var salt = Author.GenerateSalt();
+        void OnAuthorLoginClicked(object sender, RoutedEventArgs e)
+        {
+            var username = ViewModel.SelectedAuthor?.Name;
+            var password = ViewModel.InputPassword;
 
-            // Create salted hash using the generated salt
-            var hashedPassword = Author.CreateSaltedHash(password, salt);
-
-            // Create new author instance
-            var newAuthor = new Author
+            if (_authenticationService.Authenticate(username, password))
             {
-                Name = username,
-                Password = hashedPassword,
-                Salt = salt
-            };
+                MessageBox.Show("Logged in successfully!");
+                OnLoginSuccessful();
+            }
+            else
+            {
+                MessageBox.Show("Incorrect password. Please try again.");
+            }
+        }
 
-            // Add new author to ViewModel's authors list
-            ViewModel.Authors.Add(newAuthor);
+        void OnPasswordChanged(object sender, RoutedEventArgs e)
+        {
+            var passwordBox = (PasswordBox)sender;
+            ViewModel.InputPassword = passwordBox.Password;
+        }
 
-            // Save the author to the database
-            _dbContext.Authors.Add(newAuthor);
-            _dbContext.SaveChanges();
+        void DeleteAuthorClick(object sender, RoutedEventArgs e)
+        {
+            var username = ViewModel.SelectedAuthor?.Name;
+            var password = ViewModel.InputPassword;
 
-            // Navigate to the new view
-            (DataContext as MainViewModel).IsLoggedIn = true;
-            OnLoginSuccessful();
+            if (_authenticationService.DeleteAuthor(username, password))
+            {
+                ViewModel.Authors.Remove(ViewModel.SelectedAuthor);
+                MessageBox.Show("Author deleted successfully!");
+            }
+            else
+            {
+                MessageBox.Show("Incorrect password. Cannot delete author.");
+            }
         }
 
         void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -125,68 +143,7 @@ namespace Conlang.UI
                     authorsListView.SelectedIndex = -1;
                 }
 
-                e.Handled = true; // Important! Suppress further handling.
-            }
-        }
-
-        void OnAuthorLoginClicked(object sender, RoutedEventArgs e)
-        {
-            if (ViewModel.SelectedAuthor == null)
-            {
-                MessageBox.Show("Please select an author.");
-                return;
-            }
-
-            var hashedInputPassword = Author.CreateSaltedHash(ViewModel.InputPassword, ViewModel.SelectedAuthor.Salt);
-
-            if (hashedInputPassword == ViewModel.SelectedAuthor.Password)
-            {
-                // Login successful.
-                MessageBox.Show("Logged in successfully!");
-
-                // Navigate to the main application window or workspace
-                (DataContext as MainViewModel).IsLoggedIn = true;
-                var mainWindow = (MainWindow)Window.GetWindow(this);
-                if (mainWindow != null)
-                {
-                    Frame mainFrame = mainWindow.FindName("MainFrame") as Frame;
-                    if (mainFrame != null)
-                    {
-                        mainFrame.Navigate(new DashboardPage());
-                    }
-                }
-                (DataContext as MainViewModel).IsLoggedIn = true;
-                OnLoginSuccessful();
-            }
-            else
-            {
-                MessageBox.Show("Incorrect password. Please try again.");
-            }
-        }
-
-        void OnPasswordChanged(object sender, RoutedEventArgs e)
-        {
-            var passwordBox = (PasswordBox)sender;
-            var vm = (MainViewModel)this.DataContext;
-            vm.InputPassword = passwordBox.Password;
-        }
-
-        void DeleteAuthorClick(object sender, RoutedEventArgs e)
-        {
-            if (ViewModel.SelectedAuthor == null) return;
-
-            var hashedInputPassword = Author.CreateSaltedHash(ViewModel.InputPassword, ViewModel.SelectedAuthor.Salt);
-
-            if (hashedInputPassword == ViewModel.SelectedAuthor.Password)
-            {
-                // Delete author logic
-                _dbContext.Authors.Remove(ViewModel.SelectedAuthor);
-                _dbContext.SaveChanges();
-                ViewModel.Authors.Remove(ViewModel.SelectedAuthor);
-            }
-            else
-            {
-                MessageBox.Show("Incorrect password. Cannot delete author.");
+                e.Handled = true;
             }
         }
 

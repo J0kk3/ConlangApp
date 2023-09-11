@@ -1,8 +1,10 @@
-﻿using Conlang.Infrastructure.Data;
+﻿using Conlang.Application.Services;
+using Conlang.UI.Services;
 using Conlang.UI.ViewModels;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Conlang.UI.UserControls
 {
@@ -11,7 +13,7 @@ namespace Conlang.UI.UserControls
     /// </summary>
     public partial class NavigationControl : UserControl
     {
-        readonly ConlangDbContext _context;
+        INavigationService _navigationService;
 
         // Parameterless constructor mainly for design-time support
         public NavigationControl()
@@ -19,10 +21,9 @@ namespace Conlang.UI.UserControls
             InitializeComponent();
         }
 
-        internal NavigationControl(ConlangDbContext context)
+        public void SetNavigationService(INavigationService navigationService)
         {
-            InitializeComponent();
-            _context = context;
+            _navigationService = navigationService;
         }
 
         public void SetActiveButton(string pageName)
@@ -50,48 +51,46 @@ namespace Conlang.UI.UserControls
 
         void DashboardButton_Click(object sender, RoutedEventArgs e)
         {
-            var mainWindow = (MainWindow)Window.GetWindow(this);
             SetActiveButton("Dashboard");
-            mainWindow.MainFrame.Navigate(new DictionaryPage());
+            _navigationService.NavigateTo("Dashboard");
         }
 
         void DictionaryButton_Click(object sender, RoutedEventArgs e)
         {
-            var mainWindow = (MainWindow)Window.GetWindow(this);
             SetActiveButton("Dictionary");
-            mainWindow.MainFrame.Navigate(new DictionaryPage());
+            _navigationService.NavigateTo("Dictionary");
         }
 
         void SoundChangesButton_Click(object sender, RoutedEventArgs e)
         {
-            var mainWindow = (MainWindow)Window.GetWindow(this);
             SetActiveButton("Sound Changes");
-            mainWindow.MainFrame.Navigate(new SoundChangesPage());
+            _navigationService.NavigateTo("Sound Changes");
         }
 
         void FamilyTreeButton_Click(object sender, RoutedEventArgs e)
         {
-            var mainWindow = (MainWindow)Window.GetWindow(this);
             SetActiveButton("Family Tree");
-            mainWindow.MainFrame.Navigate(new FamilyTreePage());
+            _navigationService.NavigateTo("Family Tree");
         }
 
         void LogoutButton_Click(object sender, RoutedEventArgs e)
         {
             var mainWindow = (MainWindow)Window.GetWindow(this);
             ResetButtonColors();
-            //var authService = _serviceProvider.GetRequiredService<IAuthenticationService>();
-            //authService.Logout();
             var viewModel = mainWindow.DataContext as MainViewModel;
 
             if (viewModel != null)
             {
                 viewModel.IsLoggedIn = false;
 
+                var authService = ((App)System.Windows.Application.Current).ServiceProvider.GetRequiredService<IAuthenticationService>();
+                authService.Logout();
+
                 Frame mainFrame = mainWindow.FindName("MainFrame") as Frame;
+
                 if (mainFrame != null)
                 {
-                    mainFrame.Navigate(new LoginPage(_context));
+                    _navigationService.NavigateToLoginPage(authService);
                 }
             }
         }

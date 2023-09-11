@@ -9,13 +9,16 @@ using Conlang.UI.ViewModels;
 using Conlang.UI.Services;
 using System.Windows.Controls;
 using System.Threading;
+using Conlang.Application.Services;
+using Conlang.Infrastructure.Repositories;
+using Conlang.UI.UserControls;
 
 namespace Conlang.UI
 {
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
-    public partial class App : Application
+    public partial class App : System.Windows.Application
     {
         public IServiceProvider ServiceProvider { get; private set; } = null!;
 
@@ -28,15 +31,21 @@ namespace Conlang.UI
 
             var serviceCollection = new ServiceCollection();
             ConfigureServices(serviceCollection);
+
             ServiceProvider = serviceCollection.BuildServiceProvider();
 
-            var mainWindow = new MainWindow();
+            //var mainWindow = new MainWindow();
+            var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
+
+            var navigationControl = ServiceProvider.GetRequiredService<NavigationControl>();
+            mainWindow.navigationControlInstance.SetNavigationService(ServiceProvider.GetRequiredService<INavigationService>());
+
             mainWindow.Show();
 
             var loginPage = ServiceProvider.GetRequiredService<LoginPage>();
-            loginPage.LoginSuccessful += OnLoginSuccessful;
-
             Frame mainFrame = mainWindow.FindName("MainFrame") as Frame;
+
+            loginPage.LoginSuccessful += OnLoginSuccessful;
 
             if (mainFrame != null)
             {
@@ -82,12 +91,20 @@ namespace Conlang.UI
 
             services.AddSingleton<MainWindow>();
             services.AddSingleton<MainViewModel>();
+            services.AddSingleton<NavigationControl>();
+
+            services.AddTransient<IAuthenticationService, AuthenticationService>();
+            services.AddTransient<IAuthorRepository, AuthorRepository>();
 
             services.AddTransient<LoginPage>();
             services.AddTransient<DashboardPage>();
             services.AddTransient<DictionaryPage>();
             services.AddTransient<SoundChangesPage>();
             services.AddTransient<FamilyTreePage>();
+
+            services.AddSingleton<INavigationService>(p =>
+                new NavigationService(
+                    (p.GetRequiredService<MainWindow>().FindName("MainFrame") as Frame)!, p));
         }
     }
 }
