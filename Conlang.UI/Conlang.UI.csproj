@@ -24,6 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Conlang.Application\Conlang.Application.csproj" />
     <ProjectReference Include="..\Conlang.Infrastructure\Conlang.Infrastructure.csproj" />
   </ItemGroup>
 
