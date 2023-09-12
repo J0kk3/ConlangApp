@@ -101,6 +101,7 @@ namespace Conlang.UI
             services.AddTransient<DictionaryPage>();
             services.AddTransient<SoundChangesPage>();
             services.AddTransient<FamilyTreePage>();
+            services.AddTransient<IPAChart>();
 
             services.AddSingleton<INavigationService>(p =>
                 new NavigationService(
