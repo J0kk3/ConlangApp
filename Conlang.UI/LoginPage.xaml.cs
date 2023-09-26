@@ -1,6 +1,5 @@
 ﻿using Conlang.Core.Entities.Users;
 using Conlang.UI.ViewModels;
-using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
 using System.Windows;

@@ -11,6 +11,7 @@ namespace Conlang.Infrastructure.Data
         public ConlangDbContext(DbContextOptions<ConlangDbContext> options) : base(options) { }
 
         public DbSet<Author> Authors { get; set; }
+        public DbSet<ConlangProject> ConlangProjects { get; set; }
         public DbSet<Word> Words { get; private set; }
         public DbSet<IPASymbol> IPASymbols { get; set; }
         public DbSet<VowelSymbol> VowelSymbols { get; set; }

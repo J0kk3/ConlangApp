@@ -32,7 +32,7 @@ namespace Conlang.UI.ViewModels
 
         public void LoadAuthors()
         {
-            var authorsFromDb = _authorRepository.GetAllAuthors(); // Assuming you add this method to your repository
+            var authorsFromDb = _authorRepository.GetAllAuthors();
             Authors.Clear();
             foreach (var author in authorsFromDb)
             {

@@ -20,6 +20,17 @@ namespace Conlang.UI
     /// </summary>
     public partial class App : System.Windows.Application
     {
+        public App()
+        {
+            this.DispatcherUnhandledException += App_DispatcherUnhandledException;
+        }
+
+        void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        {
+            MessageBox.Show("An unhandled exception occurred: " + e.Exception.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            e.Handled = true;  // Prevents the program from terminating
+        }
+
         public IServiceProvider ServiceProvider { get; private set; } = null!;
 
         protected override void OnStartup(StartupEventArgs e)
@@ -95,6 +106,7 @@ namespace Conlang.UI
 
             services.AddTransient<IAuthenticationService, AuthenticationService>();
             services.AddTransient<IAuthorRepository, AuthorRepository>();
+            services.AddTransient<IConlangProjectRepository, ConlangProjectRepository>();
 
             services.AddTransient<LoginPage>();
             services.AddTransient<DashboardPage>();

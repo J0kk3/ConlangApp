@@ -1,12 +1,34 @@
 ﻿<Page x:Class="Conlang.UI.DashboardPage"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Conlang.UI"
-        mc:Ignorable="d"
-        Title="DashboardPage">
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:services="clr-namespace:Conlang.UI.Services"
+      mc:Ignorable="d"
+      Title="DashboardPage">
+    <Page.Resources>
+        <services:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+    </Page.Resources>
     <Grid>
-        <TextBlock Text="Welcome to your dashboard!" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"/>
+            <!-- Allocate more space for the list -->
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <!-- Left Section: List of Conlangs -->
+        <ListView Name="ConlangsListView" Grid.Column="0" VerticalAlignment="Center" Margin="10">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <!-- Modify this to fit the design of each conlang item in the list -->
+                    <TextBlock Text="{Binding Name}" Padding="5" FontSize="16"/>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+        <!-- Placeholder for Empty List -->
+        <TextBlock Text="Empty in here." HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="0" Visibility="{Binding ElementName=ConlangsListView, Path=HasItems, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Inverted}" FontSize="16" FontStyle="Italic" />
+
+        <!-- Right Section: New Conlang Button -->
+        <Button Content="New Conlang" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" FontSize="16"/>
     </Grid>
 </Page>
